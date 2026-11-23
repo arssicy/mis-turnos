@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#16161a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Mis Turnos · Agenda para tu negocio</title>
+<style>
+:root{--bg:#f5f3ef;--card:#fff;--ink:#1d1d1f;--mut:#7a766f;--line:#e7e3dc;--acc:#d94f70;--acc2:#fbe4ea;--ok:#2e8b57;--okbg:#e3f3ea;--warn:#c47a12;--warnbg:#fdf0dc;--bad:#c23b3b;--badbg:#fbe3e3;--dark:#16161a}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{background:var(--dark);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 18px 16px;position:sticky;top:0;z-index:5}
+.top .biz{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#f3a6b8;font-weight:700}
+.top h1{font-size:22px;font-weight:800;margin-top:2px}
+.wrap{max-width:600px;margin:0 auto;padding:14px 14px 0}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom));z-index:6}
+.nav button{flex:1;border:0;background:none;padding:6px 0;font-size:11px;font-weight:700;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.nav button b{font-size:20px;line-height:1}
+.nav button.on{color:var(--acc)}
+.daybar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:16px;padding:8px;margin-bottom:12px;border:1px solid var(--line)}
+.daybar button{border:0;background:var(--bg);width:40px;height:40px;border-radius:12px;font-size:18px;cursor:pointer}
+.daybar .d{text-align:center}
+.daybar .d b{display:block;font-size:16px;text-transform:capitalize}
+.daybar .d span{font-size:12px;color:var(--acc);font-weight:700;cursor:pointer}
+.week{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+.week div{flex:1;min-width:44px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-align:center;padding:6px 0;cursor:pointer}
+.week div small{display:block;font-size:10px;color:var(--mut);text-transform:uppercase;font-weight:700}
+.week div b{font-size:16px}
+.week div i{display:block;height:5px;width:5px;border-radius:50%;margin:3px auto 0;background:transparent}
+.week div.has i{background:var(--acc)}
+.week div.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.week div.on small{color:#fff}
+.week div.on.has i{background:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.t{display:flex;gap:12px;align-items:flex-start}
+.t .h{font-weight:800;font-size:17px;min-width:52px}
+.t .h small{display:block;font-size:11px;color:var(--mut);font-weight:600}
+.t .i{flex:1;min-width:0}
+.t .i b{font-size:16px}
+.t .i p{color:var(--mut);font-size:13.5px;margin-top:2px}
+.pill{display:inline-block;font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;margin-top:6px}
+.p-pend{background:var(--warnbg);color:var(--warn)}.p-ok{background:var(--okbg);color:var(--ok)}.p-no{background:var(--badbg);color:var(--bad)}.p-conf{background:#e4ecfb;color:#3559b5}
+.acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.acts button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px;font-size:13px;font-weight:700;cursor:pointer}
+.acts .wa{background:#25d366;border-color:#25d366;color:#fff}
+.fab{position:fixed;right:18px;bottom:calc(84px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;background:var(--acc);color:#fff;border:0;font-size:30px;box-shadow:0 10px 25px rgba(217,79,112,.45);cursor:pointer;z-index:7}
+.empty{text-align:center;color:var(--mut);padding:36px 10px}
+.empty b{display:block;font-size:40px;margin-bottom:8px}
+h2{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:18px 2px 8px;font-weight:800}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.stat small{color:var(--mut);font-size:12px;font-weight:700}
+.stat b{display:block;font-size:22px;margin-top:4px}
+.stat.big{grid-column:1/3;background:var(--dark);color:#fff;border:0}
+.stat.big small{color:#f3a6b8}
+.stat.big b{font-size:30px}
+.row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.row span{color:var(--mut)}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:9px;font-weight:700;color:var(--mut);cursor:pointer}
+.seg button.on{background:var(--acc2);color:var(--acc)}
+.search{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#fff;margin-bottom:10px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-end;z-index:20}
+.modal.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:600px;margin:0 auto;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}
+.sheet h3{font-size:19px;margin-bottom:12px}
+label.f{display:block;font-size:12px;font-weight:800;color:var(--mut);margin:12px 0 5px;text-transform:uppercase;letter-spacing:.06em}
+.inp{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg)}
+.two{display:flex;gap:10px}.two>div{flex:1}
+.btn{width:100%;border:0;border-radius:14px;padding:15px;font-weight:800;font-size:16px;margin-top:16px;cursor:pointer;background:var(--acc);color:#fff}
+.btn.sec{background:var(--bg);color:var(--ink);border:1px solid var(--line);margin-top:8px}
+.btn.del{background:none;color:var(--bad);margin-top:4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer}
+.chips button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.sv{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.sv:last-child{border:0}
+.sv small{color:var(--mut)}
+.sv button{border:0;background:var(--bg);border-radius:8px;padding:6px 10px;font-weight:700;cursor:pointer}
+.toast{position:fixed;top:16px;left:50%;transform:translate(-50%,-90px);background:var(--dark);color:#fff;padding:12px 18px;border-radius:999px;font-weight:700;z-index:30;transition:.25s;white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}
+.hint{font-size:13px;color:var(--mut);line-height:1.45;margin-top:6px}
+.hide{display:none!important}
+.bar{height:8px;background:var(--bg);border-radius:8px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--acc)}
+.welcome{background:var(--dark);color:#fff;border-radius:20px;padding:22px;margin-bottom:12px}
+.welcome h3{font-size:22px;margin-bottom:6px}
+.welcome p{color:#d8d4cc;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="top"><div class="biz" id="bizName">Mi negocio</div><h1 id="title">Agenda</h1></div>
+<div class="wrap">
+
+<section id="v-agenda">
+ <div id="welcome"></div>
+ <div class="daybar"><button id="prev">‹</button><div class="d"><b id="dayLbl"></b><span id="todayBtn">Ir a hoy</span></div><button id="next">›</button></div>
+ <div class="week" id="week"></div>
+ <div id="list"></div>
+</section>
+
+<section id="v-clientes" class="hide">
+ <input class="search" id="q" placeholder="Buscar cliente por nombre o teléfono">
+ <div id="clist"></div>
+</section>
+
+<section id="v-caja" class="hide">
+ <div class="seg" id="cajaSeg"><button data-p="dia" class="on">Hoy</button><button data-p="semana">Semana</button><button data-p="mes">Mes</button></div>
+ <div id="caja"></div>
+</section>
+
+<section id="v-ajustes" class="hide">
+ <h2>Tu negocio</h2>
+ <div class="card">
+  <label class="f" style="margin-top:0">Nombre del negocio</label><input class="inp" id="sBiz">
+  <label class="f">Mensaje de recordatorio (WhatsApp)</label><textarea class="inp" id="sMsg" rows="4"></textarea>
+  <p class="hint">Podés usar: {cliente} {dia} {hora} {servicio} {negocio}</p>
+  <button class="btn" id="saveCfg">Guardar</button>
+ </div>
+ <h2>Servicios y precios</h2>
+ <div class="card"><div id="svList"></div><button class="btn sec" id="addSv">+ Agregar servicio</button></div>
+ <h2>Copia de seguridad</h2>
+ <div class="card">
+  <p class="hint" style="margin:0 0 4px">Tus datos se guardan en este celular. Hacé una copia cada tanto y guardala en tu WhatsApp, Drive o mail: si cambiás de celu, la importás y listo.</p>
+  <button class="btn" id="exp">Descargar copia de seguridad</button>
+  <button class="btn sec" id="impBtn">Importar copia</button><input type="file" id="imp" accept=".json,application/json" class="hide">
+ </div>
+ <h2>Instalar en el celular</h2>
+ <div class="card"><p class="hint" style="margin:0"><b>Android (Chrome):</b> menú ⋮ → “Agregar a la pantalla principal”.<br><b>iPhone (Safari):</b> botón compartir → “Agregar a inicio”.<br>Así la abrís como cualquier app.</p></div>
+ <button class="btn del" id="wipe">Borrar todos los datos</button>
+</section>
+</div>
+
+<button class="fab" id="fab">+</button>
+<div class="nav">
+ <button data-v="agenda" class="on"><b>📅</b>Agenda</button>
+ <button data-v="clientes"><b>👥</b>Clientes</button>
+ <button data-v="caja"><b>💰</b>Caja</button>
+ <button data-v="ajustes"><b>⚙️</b>Ajustes</button>
+</div>
+
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const KEY='misturnos_v1';
+const DEF={biz:'Mi negocio',msg:'¡Hola {cliente}! Te recuerdo tu turno de {servicio} el {dia} a las {hora} en {negocio}. Si no podés venir, avisame así lo libero. ¡Gracias! 💖',
+ servicios:[{id:'s1',n:'Esmaltado semipermanente',d:60,p:15000},{id:'s2',n:'Kapping',d:90,p:20000},{id:'s3',n:'Uñas esculpidas',d:120,p:28000},{id:'s4',n:'Retiro',d:30,p:6000}],clientes:[],turnos:[],seen:false};
+let db;
+function load(){try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){db=null}if(!db)db=JSON.parse(JSON.stringify(DEF))}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){toast('No se pudo guardar en este navegador')}}
+load();
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const money=n=>'$ '+Math.round(n||0).toLocaleString('es-AR');
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const parse=s=>{const[a,b,c]=s.split('-').map(Number);return new Date(a,b-1,c)};
+const fmtDay=s=>parse(s).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+const shortDay=s=>parse(s).toLocaleDateString('es-AR',{weekday:'long',day:'numeric'});
+const addMin=(h,m)=>{const[a,b]=h.split(':').map(Number);const t=a*60+b+m;return String(Math.floor(t/60)%24).padStart(2,'0')+':'+String(t%60).padStart(2,'0')};
+let day=iso(new Date()),view='agenda',cajaP='dia';
+const sv=id=>db.servicios.find(s=>s.id==id)||{n:'Servicio',d:60,p:0};
+const cl=id=>db.clientes.find(c=>c.id==id)||{n:'Cliente',t:''};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._);t._=setTimeout(()=>t.classList.remove('show'),1800)}
+function phone(t){let d=String(t||'').replace(/\D/g,'');if(!d)return'';if(d.startsWith('0'))d=d.slice(1);if(d.startsWith('15'))d=d.slice(2);if(!d.startsWith('54'))d='549'+d;else if(!d.startsWith('549'))d='549'+d.slice(2);return d}
+function waLink(tu){const c=cl(tu.c);const m=db.msg.replace(/\{cliente\}/g,c.n.split(' ')[0]).replace(/\{dia\}/g,shortDay(tu.f)).replace(/\{hora\}/g,tu.h).replace(/\{servicio\}/g,sv(tu.s).n).replace(/\{negocio\}/g,db.biz);const p=phone(c.t);return 'https://wa.me/'+p+'?text='+encodeURIComponent(m)}
+const ST={pend:['Pendiente','p-pend'],conf:['Confirmado','p-conf'],ok:['Realizado','p-ok'],no:['No vino','p-no']};
+
+function renderAgenda(){
+ $('#welcome').innerHTML=db.seen?'':`<div class="welcome"><h3>¡Bienvenida/o a Mis Turnos! 👋</h3><p>1. En ⚙️ Ajustes poné el nombre de tu negocio y tus servicios con precios.<br>2. Tocá <b>+</b> para cargar un turno.<br>3. Con el botón verde le mandás el recordatorio por WhatsApp.</p><button class="btn" id="gotit" style="background:#fff;color:var(--dark)">¡Listo, empezar!</button></div>`;
+ $('#dayLbl').textContent=fmtDay(day);
+ const d0=parse(day);const dow=(d0.getDay()+6)%7;const mon=new Date(d0);mon.setDate(d0.getDate()-dow);
+ let w='';for(let i=0;i<7;i++){const x=new Date(mon);x.setDate(mon.getDate()+i);const k=iso(x);const has=db.turnos.some(t=>t.f==k&&t.st!='no');w+=`<div data-day="${k}" class="${k==day?'on':''} ${has?'has':''}"><small>${x.toLocaleDateString('es-AR',{weekday:'short'}).slice(0,3)}</small><b>${x.getDate()}</b><i></i></div>`}
+ $('#week').innerHTML=w;
+ const ts=db.turnos.filter(t=>t.f==day).sort((a,b)=>a.h.localeCompare(b.h));
+ if(!ts.length){$('#list').innerHTML=`<div class="empty"><b>🗓️</b>No hay turnos este día.<br>Tocá + para agregar uno.</div>`;return}
+ const tot=ts.filter(t=>t.st!='no').reduce((a,t)=>a+(+t.p||0),0);
+ $('#list').innerHTML=`<p class="hint" style="margin:0 4px 8px">${ts.length} turno${ts.length>1?'s':''} · ${money(tot)} previstos</p>`+ts.map(t=>{const c=cl(t.c),s=sv(t.s);const[st,cls]=ST[t.st||'pend'];return `<div class="card"><div class="t"><div class="h">${t.h}<small>a ${addMin(t.h,+t.d||s.d)}</small></div><div class="i"><b>${esc(c.n)}</b><p>${esc(s.n)} · ${money(t.p)}${t.nota?' · '+esc(t.nota):''}</p><span class="pill ${cls}">${st}${t.st=='ok'&&t.pago?' · '+t.pago:''}</span></div></div>
+ <div class="acts">${c.t?`<button class="wa" data-wa="${t.id}">WhatsApp</button>`:''}${t.st!='ok'?`<button data-done="${t.id}">✓ Cobrar</button>`:''}${t.st=='pend'?`<button data-conf="${t.id}">Confirmó</button>`:''}${t.st!='no'&&t.st!='ok'?`<button data-no="${t.id}">No vino</button>`:''}<button data-edit="${t.id}">Editar</button></div></div>`}).join('');
+}
+function renderClientes(){
+ const q=$('#q').value.trim().toLowerCase();
+ const list=db.clientes.filter(c=>!q||c.n.toLowerCase().includes(q)||(c.t||'').includes(q)).map(c=>{const ts=db.turnos.filter(t=>t.c==c.id&&t.st=='ok');const last=ts.map(t=>t.f).sort().pop();return{c,n:ts.length,tot:ts.reduce((a,t)=>a+(+t.p||0),0),last,nx:db.turnos.filter(t=>t.c==c.id&&t.f>=iso(new Date())&&t.st!='ok'&&t.st!='no').map(t=>t.f).sort()[0]}}).sort((a,b)=>a.c.n.localeCompare(b.c.n));
+ $('#clist').innerHTML=list.length?list.map(x=>`<div class="card"><div class="t"><div class="i"><b>${esc(x.c.n)}</b><p>${x.c.t?esc(x.c.t)+' · ':''}${x.n} visita${x.n==1?'':'s'} · ${money(x.tot)}</p><p>${x.last?'Última: '+shortDay(x.last):'Sin visitas aún'}${x.nx?' · Próximo: '+shortDay(x.nx):''}</p></div></div><div class="acts">${x.c.t?`<button class="wa" data-wac="${x.c.id}">WhatsApp</button>`:''}<button data-newfor="${x.c.id}">+ Turno</button><button data-editc="${x.c.id}">Editar</button></div></div>`).join(''):`<div class="empty"><b>👥</b>${q?'No encontré clientes con ese nombre.':'Todavía no hay clientes.<br>Se agregan solos cuando cargás un turno.'}</div>`;
+}
+function range(){const n=new Date();let a,b=iso(n);if(cajaP=='dia')a=b;else if(cajaP=='semana'){const x=new Date(n);x.setDate(n.getDate()-((n.getDay()+6)%7));a=iso(x);const y=new Date(x);y.setDate(x.getDate()+6);b=iso(y)}else{a=iso(new Date(n.getFullYear(),n.getMonth(),1));b=iso(new Date(n.getFullYear(),n.getMonth()+1,0))}return[a,b]}
+function renderCaja(){
+ const[a,b]=range();const ts=db.turnos.filter(t=>t.f>=a&&t.f<=b);const ok=ts.filter(t=>t.st=='ok');const tot=ok.reduce((x,t)=>x+(+t.p||0),0);
+ const pend=ts.filter(t=>t.st=='pend'||t.st=='conf');const no=ts.filter(t=>t.st=='no').length;
+ const by={};ok.forEach(t=>{const k=t.pago||'Efectivo';by[k]=(by[k]||0)+(+t.p||0)});
+ const bs={};ok.forEach(t=>{const k=sv(t.s).n;bs[k]=bs[k]||{n:0,m:0};bs[k].n++;bs[k].m+=+t.p||0});
+ const mx=Math.max(1,...Object.values(bs).map(x=>x.m));
+ $('#caja').innerHTML=`<div class="stats"><div class="stat big"><small>COBRADO ${cajaP=='dia'?'HOY':cajaP=='semana'?'ESTA SEMANA':'ESTE MES'}</small><b>${money(tot)}</b></div>
+ <div class="stat"><small>Turnos realizados</small><b>${ok.length}</b></div><div class="stat"><small>Por cobrar</small><b>${money(pend.reduce((x,t)=>x+(+t.p||0),0))}</b></div>
+ <div class="stat"><small>Ticket promedio</small><b>${money(ok.length?tot/ok.length:0)}</b></div><div class="stat"><small>No vinieron</small><b>${no}</b></div></div>
+ <h2>Por medio de pago</h2><div class="card">${Object.keys(by).length?Object.entries(by).map(([k,v])=>`<div class="row"><span>${k}</span><b>${money(v)}</b></div>`).join(''):'<p class="hint" style="margin:0">Todavía no cobraste turnos en este período.</p>'}</div>
+ <h2>Por servicio</h2><div class="card">${Object.keys(bs).length?Object.entries(bs).sort((x,y)=>y[1].m-x[1].m).map(([k,v])=>`<div style="padding:8px 0"><div style="display:flex;justify-content:space-between"><span>${esc(k)} <small style="color:var(--mut)">×${v.n}</small></span><b>${money(v.m)}</b></div><div class="bar"><i style="width:${v.m/mx*100}%"></i></div></div>`).join(''):'<p class="hint" style="margin:0">Sin datos todavía.</p>'}</div>`;
+}
+function renderAjustes(){$('#sBiz').value=db.biz;$('#sMsg').value=db.msg;$('#svList').innerHTML=db.servicios.map(s=>`<div class="sv"><div><b>${esc(s.n)}</b><br><small>${s.d} min · ${money(s.p)}</small></div><button data-editsv="${s.id}">Editar</button></div>`).join('')||'<p class="hint">Agregá tus servicios.</p>'}
+function render(){$('#bizName').textContent=db.biz;$('#title').textContent={agenda:'Agenda',clientes:'Clientes',caja:'Caja',ajustes:'Ajustes'}[view];
+ ['agenda','clientes','caja','ajustes'].forEach(v=>$('#v-'+v).classList.toggle('hide',v!=view));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v==view));
+ $('#fab').classList.toggle('hide',view=='ajustes'||view=='caja');
+ ({agenda:renderAgenda,clientes:renderClientes,caja:renderCaja,ajustes:renderAjustes})[view]()}
+
+function openSheet(h){$('#sheet').innerHTML=h;$('#modal').classList.add('show')}
+function close(){$('#modal').classList.remove('show')}
+$('#modal').addEventListener('click',e=>{if(e.target.id=='modal')close()});
+
+function turnoForm(t,forC){
+ const isNew=!t;t=t||{id:uid(),f:day,h:'10:00',s:db.servicios[0]?.id,c:forC||'',p:db.servicios[0]?.p||0,d:db.servicios[0]?.d||60,st:'pend',nota:''};
+ const c=t.c?cl(t.c):{n:'',t:''};
+ openSheet(`<h3>${isNew?'Nuevo turno':'Editar turno'}</h3>
+ <label class="f">Cliente</label><input class="inp" id="fC" list="dlC" placeholder="Nombre y apellido" value="${esc(c.n)}" autocomplete="off"><datalist id="dlC">${db.clientes.map(x=>`<option value="${esc(x.n)}">`).join('')}</datalist>
+ <label class="f">WhatsApp del cliente</label><input class="inp" id="fT" type="tel" placeholder="Ej: 11 2345 6789" value="${esc(c.t)}">
+ <label class="f">Servicio</label><div class="chips" id="fS">${db.servicios.map(s=>`<button data-s="${s.id}" class="${s.id==t.s?'on':''}">${esc(s.n)}</button>`).join('')}</div>
+ <div class="two"><div><label class="f">Día</label><input class="inp" id="fF" type="date" value="${t.f}"></div><div><label class="f">Hora</label><input class="inp" id="fH" type="time" step="900" value="${t.h}"></div></div>
+ <div class="two"><div><label class="f">Precio</label><input class="inp" id="fP" type="number" inputmode="numeric" value="${t.p}"></div><div><label class="f">Duración (min)</label><input class="inp" id="fD" type="number" inputmode="numeric" value="${t.d}"></div></div>
+ <label class="f">Nota (opcional)</label><input class="inp" id="fN" placeholder="Ej: diseño francesita, seña $5000" value="${esc(t.nota)}">
+ <p class="hint" id="clash"></p>
+ <button class="btn" id="fSave">${isNew?'Guardar turno':'Guardar cambios'}</button>${isNew?'':'<button class="btn del" id="fDel">Eliminar turno</button>'}`);
+ const fill=()=>{const x=db.clientes.find(k=>k.n.toLowerCase()==$('#fC').value.trim().toLowerCase());if(x&&!$('#fT').value)$('#fT').value=x.t||''};
+ $('#fC').addEventListener('change',fill);
+ $('#fS').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;t.s=b.dataset.s;const s=sv(t.s);$('#fP').value=s.p;$('#fD').value=s.d;$('#fS').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b))});
+ const chk=()=>{const f=$('#fF').value,h=$('#fH').value,d=+$('#fD').value||60;const e=addMin(h,d);const o=db.turnos.find(x=>x.id!=t.id&&x.f==f&&x.st!='no'&&x.h<e&&addMin(x.h,+x.d||60)>h);$('#clash').innerHTML=o?`⚠️ Se superpone con el turno de <b>${esc(cl(o.c).n)}</b> a las ${o.h}.`:''};
+ ['fF','fH','fD'].forEach(i=>$('#'+i).addEventListener('change',chk));chk();
+ $('#fSave').onclick=()=>{const n=$('#fC').value.trim();if(!n){toast('Escribí el nombre del cliente');return}if(!$('#fF').value||!$('#fH').value){toast('Elegí día y hora');return}
+  let x=db.clientes.find(k=>k.n.toLowerCase()==n.toLowerCase());if(!x){x={id:uid(),n,t:''};db.clientes.push(x)}x.t=$('#fT').value.trim()||x.t;
+  Object.assign(t,{c:x.id,f:$('#fF').value,h:$('#fH').value,p:+$('#fP').value||0,d:+$('#fD').value||60,nota:$('#fN').value.trim()});
+  if(isNew)db.turnos.push(t);save();close();day=t.f;view='agenda';render();toast(isNew?'Turno guardado ✓':'Cambios guardados')};
+ if(!isNew)$('#fDel').onclick=()=>{if(!confirm('¿Eliminar este turno?'))return;db.turnos=db.turnos.filter(x=>x.id!=t.id);save();close();render();toast('Turno eliminado')};
+}
+function cobrar(t){openSheet(`<h3>Cobrar turno</h3><p class="hint">${esc(cl(t.c).n)} · ${esc(sv(t.s).n)}</p><label class="f">Monto cobrado</label><input class="inp" id="cM" type="number" inputmode="numeric" value="${t.p}"><label class="f">Medio de pago</label><div class="chips" id="cP">${['Efectivo','Transferencia','Mercado Pago','Tarjeta'].map((m,i)=>`<button data-m="${m}" class="${i==0?'on':''}">${m}</button>`).join('')}</div><button class="btn" id="cOk">Marcar como cobrado</button>`);
+ let m='Efectivo';$('#cP').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;m=b.dataset.m;$('#cP').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b))});
+ $('#cOk').onclick=()=>{t.p=+$('#cM').value||0;t.st='ok';t.pago=m;save();close();render();toast('Cobrado '+money(t.p)+' ✓')}}
+function svForm(s){const isNew=!s;s=s||{id:uid(),n:'',d:60,p:0};openSheet(`<h3>${isNew?'Nuevo servicio':'Editar servicio'}</h3><label class="f">Nombre</label><input class="inp" id="vN" value="${esc(s.n)}" placeholder="Ej: Corte + brushing"><div class="two"><div><label class="f">Duración (min)</label><input class="inp" id="vD" type="number" value="${s.d}"></div><div><label class="f">Precio</label><input class="inp" id="vP" type="number" value="${s.p}"></div></div><button class="btn" id="vOk">Guardar</button>${isNew?'':'<button class="btn del" id="vDel">Eliminar servicio</button>'}`);
+ $('#vOk').onclick=()=>{s.n=$('#vN').value.trim();if(!s.n){toast('Poné un nombre');return}s.d=+$('#vD').value||60;s.p=+$('#vP').value||0;if(isNew)db.servicios.push(s);save();close();render()};
+ if(!isNew)$('#vDel').onclick=()=>{db.servicios=db.servicios.filter(x=>x.id!=s.id);save();close();render()}}
+function clForm(c){openSheet(`<h3>Editar cliente</h3><label class="f">Nombre</label><input class="inp" id="kN" value="${esc(c.n)}"><label class="f">WhatsApp</label><input class="inp" id="kT" type="tel" value="${esc(c.t)}"><button class="btn" id="kOk">Guardar</button><button class="btn del" id="kDel">Eliminar cliente y sus turnos</button>`);
+ $('#kOk').onclick=()=>{c.n=$('#kN').value.trim()||c.n;c.t=$('#kT').value.trim();save();close();render()};
+ $('#kDel').onclick=()=>{if(!confirm('¿Eliminar a '+c.n+' y todos sus turnos?'))return;db.clientes=db.clientes.filter(x=>x.id!=c.id);db.turnos=db.turnos.filter(x=>x.c!=c.id);save();close();render()}}
+
+document.addEventListener('click',e=>{const b=e.target.closest('button,[data-day]');if(!b)return;const d=b.dataset;const T=id=>db.turnos.find(x=>x.id==id);
+ if(b.id=='gotit'){db.seen=true;save();render()}
+ else if(d.v){view=d.v;render();window.scrollTo(0,0)}
+ else if(d.day){day=d.day;render()}
+ else if(d.wa){window.open(waLink(T(d.wa)),'_blank')}
+ else if(d.wac){window.open('https://wa.me/'+phone(cl(d.wac).t),'_blank')}
+ else if(d.done)cobrar(T(d.done));
+ else if(d.conf){T(d.conf).st='conf';save();render()}
+ else if(d.no){T(d.no).st='no';save();render()}
+ else if(d.edit)turnoForm(T(d.edit));
+ else if(d.newfor)turnoForm(null,d.newfor);
+ else if(d.editc)clForm(cl(d.editc));
+ else if(d.editsv)svForm(db.servicios.find(s=>s.id==d.editsv));
+ else if(d.p){cajaP=d.p;$('#cajaSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));renderCaja()}});
+$('#prev').onclick=()=>{const x=parse(day);x.setDate(x.getDate()-1);day=iso(x);render()};
+$('#next').onclick=()=>{const x=parse(day);x.setDate(x.getDate()+1);day=iso(x);render()};
+$('#todayBtn').onclick=()=>{day=iso(new Date());render()};
+$('#fab').onclick=()=>turnoForm();
+$('#q').oninput=renderClientes;
+$('#saveCfg').onclick=()=>{db.biz=$('#sBiz').value.trim()||'Mi negocio';db.msg=$('#sMsg').value.trim()||DEF.msg;save();render();toast('Guardado ✓')};
+$('#addSv').onclick=()=>svForm();
+$('#exp').onclick=()=>{const blob=new Blob([JSON.stringify(db)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mis-turnos-copia-'+iso(new Date())+'.json';a.click();toast('Copia descargada ✓')};
+$('#impBtn').onclick=()=>$('#imp').click();
+$('#imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.turnos||!x.servicios)throw 0;db=x;save();render();toast('Copia importada ✓')}catch(err){toast('Ese archivo no es una copia válida')}};r.readAsText(f)};
+$('#wipe').onclick=()=>{if(confirm('¿Borrar TODOS los turnos, clientes y ajustes? No se puede deshacer.')){db=JSON.parse(JSON.stringify(DEF));save();render();toast('Datos borrados')}};
+render();
+</script>
+</body>
+</html>
